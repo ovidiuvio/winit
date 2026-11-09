@@ -380,13 +380,17 @@ declare_class!(
             _actual_range: *mut NSRange,
         ) -> NSRect {
             trace_scope!("firstRectForCharacterRange:actualRange:");
+            // AppKit's text input service can ask while the window is being
+            // deallocated, after the weak reference to it has cleared.
+            let Some(window) = self.ivars()._ns_window.load() else {
+                return NSRect::ZERO;
+            };
             let rect = NSRect::new(
                 self.ivars().ime_position.get(),
                 self.ivars().ime_size.get()
             );
             // Return value is expected to be in screen coordinates, so we need a conversion here
-            self.window()
-                .convertRectToScreen(self.convertRect_toView(rect, None))
+            window.convertRectToScreen(self.convertRect_toView(rect, None))
         }
 
         #[method(insertText:replacementRange:)]

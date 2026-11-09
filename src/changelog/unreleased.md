@@ -52,3 +52,6 @@ changelog entry.
 
 - On Windows, fix runaway window growth when dragging across monitors with
   different DPI scale factors.
+- On macOS, fix an abort when the text input service asks a view for its
+  `firstRectForCharacterRange:actualRange:` while its window is being
+  deallocated.
